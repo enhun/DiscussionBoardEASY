@@ -1,0 +1,84 @@
+﻿@model DiscussionBoard.Models.Post
+
+@{
+    ViewData["Title"] = "發表新文章";
+}
+
+<div class="container">
+    <h1 class="my-4">發表新文章</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Content" class="control-label"></label>
+                    <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Author" class="control-label"></label>
+                    <input asp-for="Author" class="form-control" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Photo" class="control-label"></label>
+                    <input type="file" name="photo" id="photoInput" class="form-control" accept="image/*" onchange="previewImage(this);" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="發表" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    圖片預覽
+                </div>
+                <div class="card-body">
+                    <img id="imagePreview" src="" alt="預覽圖片" class="img-fluid d-none" />
+                    <p id="noImageText" class="text-center text-muted my-3">尚未選擇圖片</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const noImageText = document.getElementById('noImageText');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                    noImageText.classList.add('d-none');
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '';
+                preview.classList.add('d-none');
+                noImageText.classList.remove('d-none');
+            }
+        }
+    </script>
+}

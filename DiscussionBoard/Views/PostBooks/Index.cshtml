@@ -1,0 +1,23 @@
+﻿@model IEnumerable<DiscussionBoard.Models.Post>
+@{
+    ViewData["Title"] = "討論區";
+}
+<div class="container">
+    <h1 class="my-4">討論區</h1>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">發表新文章</a>
+    </p>
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <a asp-action="Details" asp-route-id="@item.Id" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@item.Title</h5>
+                    <small>@item.PostTime.ToString("yyyy/MM/dd HH:mm")</small>
+                </div>
+                <p class="mb-1">@item.Content.Substring(0, Math.Min(100, item.Content.Length))...</p>
+                <small>發表人: @item.Author | 回覆數: @item.Replies.Count</small>
+            </a>
+        }
+    </div>
+</div>

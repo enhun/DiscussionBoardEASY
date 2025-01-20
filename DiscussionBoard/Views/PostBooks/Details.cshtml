@@ -1,0 +1,78 @@
+﻿@model DiscussionBoard.Models.Post
+@{
+    ViewData["Title"] = Model.Title;
+}
+<div class="container">
+    <div class="card my-4">
+        <div class="card-header">
+            <h1 class="card-title">@Model.Title</h1>
+            <p class="card-subtitle text-muted">
+                發表人: @Model.Author | 發表時間: @Model.PostTime.ToString("yyyy/MM/dd HH:mm")
+            </p>
+        </div>
+        <div class="card-body">
+            <p class="card-text">@Model.Content</p>
+            @if (Model.Photo != null)
+            {
+                <img src="data:@Model.PhotoContentType;base64,@Convert.ToBase64String(Model.Photo)"
+                     class="img-fluid mb-3"
+                     alt="文章圖片" />
+            }
+        </div>
+        <div class="card-footer">
+            <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+        </div>
+    </div>
+
+    <!-- 回覆表單 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">發表回覆</h5>
+        </div>
+        <div class="card-body">
+            <form asp-controller="RePostBooks" asp-action="Create" method="post">
+                <input type="hidden" name="postId" value="@Model.Id" />
+                <div class="form-group mb-3">
+                    <label for="content" class="control-label">回覆內容</label>
+                    <textarea name="content" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="author" class="control-label">回覆人</label>
+                    <input type="text" name="author" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary">送出回覆</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 回覆列表 -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">回覆列表 (@Model.Replies.Count)</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Replies.Any())
+            {
+                foreach (var reply in Model.Replies)
+                {
+                    <div class="border-bottom mb-3 pb-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>@reply.Author</strong>
+                            <small class="text-muted">@reply.ReplyTime.ToString("yyyy/MM/dd HH:mm")</small>
+                        </div>
+                        <p class="mb-0">@reply.Content</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-muted">目前還沒有回覆，來當第一個回覆的人吧！</p>
+            }
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
